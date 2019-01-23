@@ -1,0 +1,20 @@
+<!--pages/personalityDetail.wxml-->
+<view class="page">
+    <view class="page__hd">
+        <view class="page__title">{{detail.typeDesc}}</view>
+        <view class="page__desc">{{detail.note}}</view>
+    </view>
+    <view class="page__bd">
+        <view class="weui-article" >
+            <view class="weui-article__section" wx:for="{{detail.subsection}}">
+                <view class="weui-article__h1">{{item.title}}</view>
+                <!-- <view class="weui-article__title">{{item.title}}</view> -->
+                <view class="weui-article__section">
+                    <view class="weui-article__p">
+                    {{item.desc}}
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

@@ -10,7 +10,28 @@ Page({
     userInfo: {},
     avatarUrl: './user-unlogin.png',
     posts: '',
-    showResults: false
+    showResults: false,
+    famousPersons:[
+      {
+        name: 'Trump', type: 'INFJ',
+        desc: 'Trump is the presenident', avatar: './user-unlogin.png'
+      },
+      {
+        name: 'Trump', type: 'INFJ',
+        desc: 'Trump is the presenident', avatar: './user-unlogin.png'
+      },
+      {
+        name: 'Trump', type: 'INFJ',
+        desc: 'Trump is the presenident', avatar: './user-unlogin.png'
+      },
+      {
+        name: 'Trump', type: 'INFJ',
+        desc: 'Trump is the presenident', avatar: './user-unlogin.png'
+      },
+    ],
+    predict:{
+      type: 'IMDT'
+    }
   },
 
   /**
@@ -101,6 +122,10 @@ Page({
 
       })
       
+  },
+
+  showPersonalityDetail: function(){
+    //wx.navigateTo({ url: '/pages/personalityDetail/personalityDetail'}) 
   },
 
   /**

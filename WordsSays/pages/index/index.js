@@ -1,5 +1,5 @@
 const app = getApp()
-
+var hasClick = false;
 // pages/index/index.js
 Page({
 
@@ -8,7 +8,9 @@ Page({
    */
   data: {
     userInfo: {},
-    avatarUrl: './user-unlogin.png'
+    avatarUrl: './user-unlogin.png',
+    posts: '',
+    showResults: false
   },
 
   /**
@@ -46,6 +48,59 @@ Page({
   getDataBindTap: function (e) {
     var result = e.detail.value;
     console.log(result)
+   
+      // wx.request({
+      //   url: 'http://127.0.0.1:5000/predictPersonality',
+      //   method: 'POST',
+      //   header: { 'content-type': 'application/json' },
+      //   data: {
+      //     posts: result
+      //   },
+      //   success: function (res) {
+      //     console.log(res)// 服务器回包信息
+
+      //   }
+
+      // })
+  },
+  startPredict: function(){
+    if (hasClick) {
+      return;
+    }
+    this.data.showResults = false
+    console.log(this.data.showResults)
+    hasClick = true;
+    wx.showLoading();
+    console.log(this.data.posts);
+    var _this = this
+    wx.request({
+        url: 'http://127.0.0.1:5000/predictPersonality',
+        method: 'POST',
+        header: { 'content-type': 'application/json' },
+        data: {
+          posts: this.data.posts
+        },
+        success: function (res) {
+          if (res.statusCode === 200) {
+            console.log(res.data)// 服务器回包内容
+          }
+        },
+      fail: function (res) {
+
+        wx.showToast({ title: '系统错误' })
+
+      },
+
+      complete: function (res) {
+
+        wx.hideLoading()
+        _this.setData({showResults : true})
+        hasClick = false
+
+      }
+
+      })
+      
   },
 
   /**

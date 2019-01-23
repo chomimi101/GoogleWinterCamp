@@ -1,0 +1,84 @@
+<!--pages/index/index.wxml-->
+<view class='container'>
+ <!-- 用户 openid -->
+   <!-- 用户 openid -->
+  <view class="component">
+    <button 
+      open-type="getUserInfo" 
+      bindgetuserinfo="onGetUserInfo"
+      class="userinfo-avatar"
+      style="background-image: url({{avatarUrl}})"
+    ></button>
+    <view>
+      <text>您想要了解什么？</text>
+    </view>
+  </view>
+
+
+
+
+
+  <view class="component">
+    <view class="uploader-text" >
+      <view class="title">说过的内容</view>
+       <textarea class="weui-textarea" placeholder="请输入内容" bindblur="getDataBindTap" auto-height />
+    </view>
+  </view>
+
+   <view class="weui-cells__title">都说过什么呢？</view>
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">
+                    <textarea class="weui-textarea" placeholder="请输入文本" style="height: 3.3em" />
+                    <view class="weui-textarea-counter">0/200</view>
+                </view>
+            </view>
+        </view>
+ 
+
+    <button class="weui-btn" type="primary">开始测试</button>
+
+
+
+    <!-- 上传文本
+  <view class="component">
+
+    <view class="results-text">
+      <text>**人格</text>
+    </view>
+  </view> -->
+
+ <view class="weui-cells__title">测试结果</view>
+  <view class="weui-form-preview">
+            <view class="weui-form-preview__hd">
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">您的人格是</view>
+                    <view class="weui-form-preview__value_in-hd">MBTI</view>
+                </view>
+            </view>
+            <view class="weui-form-preview__bd">
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">心理能力</view>
+                    <view class="weui-form-preview__value">外向</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">认识世界</view>
+                    <view class="weui-form-preview__value">直觉</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">决定方式</view>
+                    <view class="weui-form-preview__value">情感</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">生活方式</view>
+                    <view class="weui-form-preview__value">理解</view>
+                </view>
+            </view>
+            <view class="weui-form-preview__ft">
+                <navigator url="" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">更多</navigator>
+            </view>
+        </view>
+
+
+
+</view>

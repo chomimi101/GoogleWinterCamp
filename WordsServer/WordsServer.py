@@ -1,7 +1,8 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
-from google.cloud import translate
+
+#from google.cloud import translate
 
 app = Flask(__name__)
 
@@ -16,33 +17,33 @@ def predictPersonality():
 	app.logger.debug(request.form.get('posts'))
 	#user_posts = request.form['posts']
 	user_posts = request.form.get('posts')
-	user_posts = translateToEnglish(user_posts)
+	#user_posts = translateToEnglish(user_posts)
 	predict_type = predict(user_posts)
 	resp = jsonify({'type': user_posts})
 	return resp
 
 
 
-def translateToEnglish(text):
-	translate_client = translate.Client()
-	results = translate_client.get_languages()
+# def translateToEnglish(text):
+# 	translate_client = translate.Client()
+# 	results = translate_client.get_languages()
 
-	for language in results:
-		print(u'{name} ({language})'.format(**language))
+# 	for language in results:
+# 		print(u'{name} ({language})'.format(**language))
 
 
-	text = u'Hello, world!'
-	target = 'zh'
+# 	text = u'Hello, world!'
+# 	target = 'zh'
 
-	translation = translate_client.translate(text,target_language=target)
+# 	translation = translate_client.translate(text,target_language=target)
 
-	print(u'Text: {}'.format(text))
-	print(u'Translation: {}'.format(translation['translatedText']))
-	return translation
+# 	print(u'Text: {}'.format(text))
+# 	print(u'Translation: {}'.format(translation['translatedText']))
+# 	return translation
 
 
 def predict(posts):
-	return None
+	return "IMBT"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

@@ -8,7 +8,9 @@
         <view class="weui-article" >
             <view class="weui-article__section" wx:for="{{detail.subsection}}">
                 <view class="weui-article__h1">{{item.title}}</view>
-                <!-- <view class="weui-article__title">{{item.title}}</view> -->
+                <!-- <view class="weui-article__title">{{item.title}}</view> -->              <view class="weui-article__p">
+                        <image class="weui-article__img" src="INFJ_introduction.svg" mode="aspectFit" style="height: 180px" />
+                    </view>
                 <view class="weui-article__section">
                     <view class="weui-article__p">
                     {{item.desc}}

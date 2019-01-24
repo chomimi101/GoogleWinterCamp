@@ -10,7 +10,7 @@
       style="background-image: url({{avatarUrl}})"
     ></button>
     <view>
-      <text>您想要了解什么？</text>
+      <text>Who you are?</text>
     </view>
   </view>
 
@@ -19,12 +19,12 @@
 
 
 
-  <view class="weui-cells__title">都说过什么呢？</view>
+  <view class="weui-cells__title">What did you say frequently?</view>
   <view class="weui-cells weui-cells_after-title">
     <view class="weui-cell">
       <view class="weui-cell__bd">
-       <textarea class="weui-textarea" value="{{posts}}"  placeholder="请输入内容" bindblur="getDataBindTap" style="height: 3.3em" />
-       <view class="weui-textarea-counter">0/200</view>
+       <textarea class="weui-textarea" value="{{posts}}"  placeholder="Please input" bindblur="getDataBindTap" style="height: 3.3em" />
+       <view class="weui-textarea-counter">185/200</view>
        </view>
     </view>
     </view>
@@ -40,7 +40,7 @@
         </view> -->
  
 
-    <button class="weui-btn" type="primary" bindtap="startPredict">开始测试</button>
+    <button class="weui-btn" type="primary" bindtap="startPredict">Start Test</button>
 
 
 
@@ -52,39 +52,40 @@
     </view>
   </view> -->
 <view class="page__bd" wx:if="{{showResults}}">
- <view class="weui-cells__title">测试结果</view>
+ <view class="weui-cells__title">Test Result</view>
   <view class="weui-form-preview">
             <view class="weui-form-preview__hd">
                 <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">您的人格是</view>
-                    <view class="weui-form-preview__value_in-hd">MBTI</view>
+                    <view class="weui-form-preview__label">Your Personality is:</view>
+                    <view class="weui-form-preview__value_in-hd">INFJ</view>
                 </view>
             </view>
             <view class="weui-form-preview__bd">
                 <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">心理能力</view>
-                    <view class="weui-form-preview__value">外向</view>
+                    <view class="weui-form-preview__label">Psychological Ability</view>
+                    <view class="weui-form-preview__value">Outward</view>
                 </view>
                 <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">认识世界</view>
-                    <view class="weui-form-preview__value">直觉</view>
+                    <view class="weui-form-preview__label">Know World</view>
+                    <view class="weui-form-preview__value">Intuition</view>
                 </view>
                 <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">决定方式</view>
-                    <view class="weui-form-preview__value">情感</view>
+                    <view class="weui-form-preview__label">Decision mode</view>
+                    <view class="weui-form-preview__value">Emotion</view>
                 </view>
                 <view class="weui-form-preview__item">
-                    <view class="weui-form-preview__label">生活方式</view>
-                    <view class="weui-form-preview__value">理解</view>
+                    <view class="weui-form-preview__label">Lifestyle</view>
+                    <view class="weui-form-preview__value">Understanding</view>
                 </view>
             </view>
             <view class="weui-form-preview__ft">
-                <navigator url="/pages/personalityDetail/personalityDetail?type={{predict.type}}" bindtap="showPersonalityDetail" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">更多</navigator>
+                <!-- <web-view src="https://www.16personalities.com/ch/{{predict.type}}-人格"></web-view> -->
+                <navigator url="/pages/personalityDetail/personalityDetail?type={{predict.type}}"  bindtap="showPersonalityDetail" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">More</navigator>
             </view>
         </view>
 
        <view class="weui-panel weui-panel_access">
-            <view class="weui-panel__hd">图文组合列表</view>
+            <view class="weui-panel__hd">These celebrities like you:</view>
             <view class="weui-panel__bd">
                 <navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" wx:for="{{famousPersons}}">
                     <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
@@ -92,12 +93,12 @@
                     </view>
                     <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
                         <view class="weui-media-box__title">{{item.name}}</view>
-                        <view class="weui-media-box__desc">{{item.desc}}</view>
+                        <view class="weui-media-box__desc">{{item.type_description}}</view>
                     </view>
                 </navigator>
             </view>
             <view class="weui-form-preview__ft">
-                <navigator url="" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">更多</navigator>
+                <navigator url="" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">More</navigator>
             </view>
         </view>
 

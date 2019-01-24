@@ -12,7 +12,8 @@ def hello_world():
 
 @app.route('/predictPersonality', methods=['POST'])
 def predictPersonality():
-	print(request.data)
+	app.logger.debug('A value for debugging')
+	app.logger.debug(request.form.get('posts'))
 	#user_posts = request.form['posts']
 	user_posts = request.form.get('posts')
 	user_posts = translateToEnglish(user_posts)

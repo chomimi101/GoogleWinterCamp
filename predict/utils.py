@@ -7,29 +7,42 @@ import pandas as pd
 from torch import nn
 from pytorch_pretrained_bert import BertTokenizer
 
-data_path = './data/mbti_1.csv'
 bert_model = 'bert-base-uncased'
-preprocess_path = './data/preprocess_mbti.csv'
-preprocess_lstm_path = './data/preprocess_lstm_mbti.csv'
+data_path = './data/mbti_1.csv'
+vocab_path = './data/vocab'
+preprocess_train = './data/preprocess_mbti_train.csv'
+preprocess_test = './data/preprocess_mbti_test.csv'
+preprocess_lstm_train = './data/preprocess_lstm_mbti_train.csv'
+preprocess_lstm_test = './data/preprocess_lstm_mbti_test.csv'
 
 UNK = '<UNK>'
+SEP = '<SEP>'
 labels_vocab = {'ENFJ': 0, 'ENFP': 1, 'ENTJ': 2, 'ENTP': 3, 'ESFJ': 4, 'ESFP': 5, 'ESTJ': 6, 'ESTP': 7, 'INFJ': 8,
-                'INFP': 9, 'INTJ': 10, 'INTP': 11, 'ISFJ': 12, 'ISFP': 14, 'ISTP': 15}
+                'INFP': 9, 'INTJ': 10, 'INTP': 11, 'ISFJ': 12, 'ISFP': 13, 'ISTJ': 14, 'ISTP': 15}
 
 
 class Args(object):
     def __init__(self):
         self.lr = 1e-3
         self.small_lr = 1e-5
+        self.weight_decay = 1e-4
+        self.train_test_ratio = 0.9
         self.shuffle = True
+        self.model = 'lstm'
         self.batch_size = 64
+        self.epoch = 10
+        self.hidden_size = 100
+        self.word_dim = 100
+        self.num_layers = 1
+        self.dropout_p = 0.1
+        self.embed_matrix = None
         self.max_len = 500
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.path = preprocess_lstm_path
+        self.class_num = 16
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # Function to clean data
-def post_cleaner(post, punc2='.'):
+def post_cleaner(post):
     # Covert all uppercase characters to lower case
     post = post.lower()
     # Remove |||
@@ -41,49 +54,63 @@ def post_cleaner(post, punc2='.'):
     # This would have removed most of the links but probably not all
     # Remove puntuations
     puncs1 = {'@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', '|', '\\',
-              '<', '>', '/'}
+              '<', '>', '/', ',', '\'', '"', ';', ':', '...'}
+    for label in labels_vocab.keys():
+        puncs1.add(label)
     for punc in puncs1:
-        post = post.replace(punc, '')
-    puncs2 = {',', '.', '?', '!', '\n', ':', '\'', '"', ';'}
+        post = post.replace(punc, ' ')
+    puncs2 = {'.', '?', '!', '\n'}
     for punc in puncs2:
-        post = post.replace(punc, punc2)
+        post = post.replace(punc, ' ' + SEP + ' ')
     # Remove extra white spaces
     post = re.sub('\s+', ' ', post).strip()
     return post
 
 
-def preprocess(data_path, out_path):
+def preprocess(data_path, out_path1, out_path2, ratio):
     text = pd.read_csv(data_path)
+    train_num = ratio * text.shape[0]
     tokenizer = BertTokenizer.from_pretrained(bert_model)
-    max_len = 0
-    with open(out_path, 'w') as out_f:
+    total_len, count = 0, 0
+    with open(out_path1, 'w') as out_f1, open(out_path2, 'w') as out_f2:
         for i in range(text.shape[0]):
             info = text.iloc[i]
             preprocess_info = {}
             preprocess_info['label'] = info['type']
-            preprocess_info['posts_list'] = [post for post in post_cleaner(info['posts']).split('|||') if post != '']
+            preprocess_info['posts_list'] = [post for post in post_cleaner(info['posts']).split('|||') if len(post) != 0]
             preprocess_info['bert_list'] = []
             preprocess_info['bert_index_list'] = []
             for index, post in enumerate(preprocess_info['posts_list']):
-                sents = post.split('.')
+                sents = post.split(SEP)
                 for sent in sents:
                     tokenize_res = tokenizer.tokenize(sent)
-                    max_len = max(max_len, len(tokenize_res))
-                    preprocess_info['bert_list'].append(tokenize_res)
-                    preprocess_info['bert_index_list'].append(tokenizer.convert_tokens_to_ids(tokenize_res))
-            out_f.write(json.dumps(preprocess_info) + '\n')
-    print(max_len)
+                    total_len += len(tokenize_res)
+                    if len(tokenize_res) != 0:
+                        count += 1
+                        preprocess_info['bert_list'].append(tokenize_res)
+                        preprocess_info['bert_index_list'].append(tokenizer.convert_tokens_to_ids(tokenize_res))
+            if i < train_num:
+                out_f1.write(json.dumps(preprocess_info) + '\n')
+            else:
+                out_f2.write(json.dumps(preprocess_info) + '\n')
+    print(count, total_len / count)
 
 
-def preprocess_lstm(data_path, out_path):
+def preprocess_lstm(data_path, out_path1, out_path2, ratio):
     text = pd.read_csv(data_path)
-    with open(out_path, 'w') as out_f:
+    train_num = ratio * text.shape[0]
+    with open(out_path1, 'w') as out_f1, open(out_path2, 'w') as out_f2:
         for i in range(text.shape[0]):
             info = text.iloc[i]
             preprocess_info = {}
             preprocess_info['label'] = info['type']
-            preprocess_info['posts'] = post_cleaner(info['posts'], punc2=' ')
-            out_f.write(json.dumps(preprocess_info) + '\n')
+            post = post_cleaner(info['posts']).replace('|||', ' ')
+            post = re.sub('\s+', ' ', post).strip()
+            preprocess_info['posts'] = post
+            if i < train_num:
+                out_f1.write(json.dumps(preprocess_info) + '\n')
+            else:
+                out_f2.write(json.dumps(preprocess_info) + '\n')
 
 
 def sequence_mask(lengths, max_len=None, device=None):
@@ -209,7 +236,17 @@ def runBiRNN(rnn, inputs, seq_lengths, hidden=None, total_length=None):
     return desorted_res, hidden
 
 
+def fix_hidden(h):
+    """
+    The encoder hidden is  (layers*directions) x batch x dim.
+    We need to convert it to layers x batch x (directions*dim).
+    """
+    h = torch.cat([h[0:h.size(0):2], h[1:h.size(0):2]], 2)
+    return h
+
+
 if __name__ == '__main__':
-    # preprocess(data_path, preprocess_path)
-    # preprocess_lstm(data_path, preprocess_lstm_path)
-    pass
+    args = Args()
+    preprocess(data_path, preprocess_train, preprocess_test, args.train_test_ratio)
+    # preprocess_lstm(data_path, preprocess_lstm_train, preprocess_lstm_test, args.train_test_ratio)
+    # pass

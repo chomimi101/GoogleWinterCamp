@@ -1,9 +1,48 @@
 from flask import Flask
+from flask import request
+from flask import jsonify
+from google.cloud import translate
+
 app = Flask(__name__)
 
-@app.route("/")
-def hello():
-    return "<h1 style='color:blue'>Hello There!</h1>"
+@app.route('/')
+def hello_world():
+	return 'Hello, World!'
+
+
+@app.route('/predictPersonality', methods=['POST'])
+def predictPersonality():
+	app.logger.debug('A value for debugging')
+	app.logger.debug(request.form.get('posts'))
+	#user_posts = request.form['posts']
+	user_posts = request.form.get('posts')
+	user_posts = translateToEnglish(user_posts)
+	predict_type = predict(user_posts)
+	resp = jsonify({'type': user_posts})
+	return resp
+
+
+
+def translateToEnglish(text):
+	translate_client = translate.Client()
+	results = translate_client.get_languages()
+
+	for language in results:
+		print(u'{name} ({language})'.format(**language))
+
+
+	text = u'Hello, world!'
+	target = 'zh'
+
+	translation = translate_client.translate(text,target_language=target)
+
+	print(u'Text: {}'.format(text))
+	print(u'Translation: {}'.format(translation['translatedText']))
+	return translation
+
+
+def predict(posts):
+	return None
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
